@@ -12,21 +12,17 @@
       --glass-border: rgba(255, 255, 255, 0.18);
       --accent: #3b82f6;
       --accent-heart: #ef4444;
-      --accent-flame: #f59e0b;
       --text-main: #f9fafb;
       --text-sub: #9ca3af;
       --radius-lg: 22px;
       --radius-md: 14px;
       --bg-brightness: 100%;
-      --bg-blur-val: 25px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Roboto, sans-serif;
     }
@@ -37,6 +33,7 @@
       background: #0b0f19;
       color: var(--text-main);
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     body {
@@ -44,16 +41,15 @@
       position: relative;
     }
 
-    /* ФОНОВЫЕ СЛОИ С ЖЕСТКОЙ БЛОКИРОВКОЙ pointer-events */
+    /* ФОНОВЫЕ СЛОИ С ПОЛНЫМ ОТКЛЮЧЕНИЕМ КЛИКОВ */
     #global-bg {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
       background-size: cover;
       background-position: center;
-      filter: brightness(var(--bg-brightness)) blur(var(--bg-blur-val));
+      filter: brightness(var(--bg-brightness)) blur(25px);
       z-index: -9999 !important;
       pointer-events: none !important;
-      transition: background-image 0.8s ease;
     }
 
     #particles-canvas {
@@ -85,7 +81,6 @@
       padding: 16px;
       margin-bottom: 14px;
       position: relative;
-      z-index: 20;
     }
 
     /* Вкладки сверху */
@@ -97,8 +92,6 @@
       padding: 4px;
       border-radius: var(--radius-md);
       margin-bottom: 18px;
-      position: relative;
-      z-index: 30;
     }
 
     .tab-btn {
@@ -112,7 +105,6 @@
       font-size: 14px;
       border-radius: 10px;
       cursor: pointer;
-      touch-action: manipulation;
     }
 
     .tab-btn.active {
@@ -127,8 +119,6 @@
       align-items: center;
       position: relative;
       cursor: pointer;
-      touch-action: manipulation;
-      z-index: 25;
     }
 
     .book-cover {
@@ -157,9 +147,7 @@
       background: none; border: none;
       cursor: pointer;
       padding: 12px;
-      z-index: 40;
       stroke: var(--text-sub); fill: none;
-      touch-action: manipulation;
     }
     .heart-btn.active {
       stroke: var(--accent-heart);
@@ -173,8 +161,6 @@
       border-radius: 12px; padding: 12px 16px;
       color: white; display: inline-flex; align-items: center; justify-content: center;
       cursor: pointer; gap: 6px; font-size: 14px; font-weight: 500;
-      touch-action: manipulation;
-      z-index: 30;
     }
 
     /* Нижнее Меню */
@@ -193,7 +179,6 @@
       color: var(--text-sub); cursor: pointer;
       display: flex; flex-direction: column; align-items: center;
       padding: 12px;
-      touch-action: manipulation;
     }
     .nav-item svg { stroke: var(--text-sub); fill: none; pointer-events: none; }
     .nav-item.active svg { stroke: var(--accent); }
@@ -263,7 +248,7 @@
         <h2 id="prev-title"></h2>
         <p id="prev-genre" style="color: var(--accent); font-size: 12px; margin: 4px 0 10px 0;"></p>
         <p id="prev-desc" style="color: var(--text-sub); font-size: 13px; margin-bottom: 16px;"></p>
-        <button class="icon-btn" style="width: 100%; justify-content: center; background: var(--accent);" onclick="startReading(false)">Читать</button>
+        <button class="icon-btn" style="width: 100%; justify-content: center; background: var(--accent);" onclick="startReading()">Читать</button>
       </div>
     </div>
 
@@ -330,13 +315,13 @@
   </div>
 
   <script>
-    // Принудительный старт Telegram API
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-      }
-    } catch (e) { console.log(e); }
+    // Универсальная инициализация для Telegram
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+    }
 
     let books = [
       {
@@ -357,16 +342,32 @@
     let currentBook = null;
     let currentSceneIdx = 0;
 
+    // Вспомогательная функция для поддержки и тачей, и кликов
+    function addTapListener(el, callback) {
+      let moved = false;
+      el.addEventListener('touchmove', () => { moved = true; }, {passive: true});
+      el.addEventListener('touchend', (e) => {
+        if (!moved) {
+          e.preventDefault();
+          callback(e);
+        }
+        moved = false;
+      });
+      el.addEventListener('click', (e) => {
+        callback(e);
+      });
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       renderBooks('all');
       initParticles();
 
-      // Навешиваем слушатели на вкладки
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        addTapListener(btn, (e) => {
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          renderBooks(e.target.dataset.cat);
+          let target = e.currentTarget;
+          target.classList.add('active');
+          renderBooks(target.dataset.cat);
         });
       });
     });
@@ -404,12 +405,13 @@
           </button>
         `;
 
-        card.querySelector('.heart-btn').addEventListener('click', (e) => {
+        const heart = card.querySelector('.heart-btn');
+        addTapListener(heart, (e) => {
           e.stopPropagation();
-          toggleFav(b.id, e.currentTarget);
+          toggleFav(b.id, heart);
         });
 
-        card.addEventListener('click', () => openPreview(b));
+        addTapListener(card, () => openPreview(b));
         container.appendChild(card);
       });
     }
@@ -433,7 +435,7 @@
         const card = document.createElement('div');
         card.className = 'glass-card book-card';
         card.innerHTML = `<img class="book-cover" src="${b.cover}"><div class="book-info"><div class="book-title">${b.title}</div></div>`;
-        card.addEventListener('click', () => openPreview(b));
+        addTapListener(card, () => openPreview(b));
         container.appendChild(card);
       });
     }
@@ -491,7 +493,7 @@
       const cvs = document.getElementById('particles-canvas');
       const ctx = cvs.getContext('2d');
       cvs.width = window.innerWidth; cvs.height = window.innerHeight;
-      let pts = Array.from({length: 25}, () => ({
+      let pts = Array.from({length: 20}, () => ({
         x: Math.random()*cvs.width, y: Math.random()*cvs.height,
         r: Math.random()*1.5 + 0.5, dY: Math.random()*0.3 + 0.1, o: Math.random()*0.5 + 0.2
       }));
@@ -509,4 +511,3 @@
   </script>
 </body>
 </html>
-
