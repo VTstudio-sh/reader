@@ -2,845 +2,698 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Читалка Telegram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Читалка Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-glass: rgba(22, 22, 34, 0.65);
-      --border-glass: rgba(255, 255, 255, 0.12);
-      --accent-color: #007aff;
-      --accent-glow: rgba(0, 122, 255, 0.4);
+      --bg-color: #0d0f17;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --accent: #2AABEE;
       --text-main: #ffffff;
-      --text-sub: #a0a0b0;
-      --tg-safe-top: var(--tg-content-safe-area-inset-top, 20px);
-      --tg-safe-bottom: var(--tg-content-safe-area-inset-bottom, 20px);
+      --text-sub: #a0a5b5;
+      --danger: #ff4b4b;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
-      background-color: #0d0d12;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-color);
       color: var(--text-main);
-      overflow: hidden;
-      height: 100vh;
-      width: 100vw;
-      position: relative;
-    }
-
-    /* Фоны и визуальные эффекты */
-    #app-background {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-size: cover;
-      background-position: center;
-      transition: filter 0.3s ease, background-image 0.5s ease;
-      filter: brightness(0.8) blur(10px);
-      z-index: 1;
-    }
-
-    #particles-canvas {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    /* Основной контейнер с учетом Safe Area */
-    #app-container {
-      position: relative;
-      z-index: 3;
+      overflow-x: hidden;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      padding-top: calc(var(--tg-safe-top) + 12px);
-      padding-bottom: calc(var(--tg-safe-bottom) + 70px);
     }
 
-    /* Элементы Glassmorphism */
-    .glass-card {
-      background: var(--bg-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border-glass);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-
-    .glass-nav {
-      background: rgba(18, 18, 28, 0.75);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-top: 1px solid var(--border-glass);
-    }
-
-    /* Шапка приложения */
-    header {
-      padding: 0 16px 12px 16px;
+    /* Навигация */
+    .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .header-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    /* Контентные экраны */
-    .screen {
-      display: none;
-      flex: 1;
-      overflow-y: auto;
-      padding: 0 16px 16px 16px;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    /* Категории */
-    .categories {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
-    }
-
-    .category-chip {
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 600;
-      white-space: nowrap;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-glass);
-      color: var(--text-sub);
-    }
-
-    .category-chip.active {
-      background: var(--accent-color);
-      color: #fff;
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-
-    /* Сетка книг */
-    .books-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
-    }
-
-    .book-card {
-      position: relative;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .book-cover {
-      width: 100%;
-      height: 180px;
-      border-radius: 12px;
-      object-fit: cover;
-    }
-
-    .fav-btn {
-      position: absolute;
-      top: 18px; right: 18px;
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.5);
+      padding: 12px 16px;
+      background: rgba(13, 15, 23, 0.8);
       backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
+    .top-title { font-size: 18px; font-weight: bold; }
 
-    .fav-btn:active {
-      transform: scale(1.3);
-    }
-
-    .fav-btn svg {
-      width: 18px; height: 18px;
-      fill: none;
-      stroke: #fff;
-      stroke-width: 2;
-      transition: fill 0.2s ease, stroke 0.2s ease;
-    }
-
-    .fav-btn.active svg {
-      fill: #ff2d55;
-      stroke: #ff2d55;
-    }
-
-    .book-title {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .book-author {
-      font-size: 12px;
-      color: var(--text-sub);
-    }
-
-    /* Нижняя панель навигации */
-    nav {
-      position: absolute;
-      bottom: 0; left: 0; width: 100%;
-      height: calc(60px + var(--tg-safe-bottom));
-      padding-bottom: var(--tg-safe-bottom);
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(13, 15, 23, 0.95);
+      backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 10;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      z-index: 100;
     }
-
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      color: var(--text-sub);
-      background: none;
-      border: none;
-      cursor: pointer;
-      width: 20%;
-    }
-
-    .nav-item.active {
-      color: var(--accent-color);
-    }
-
-    .nav-item svg {
-      width: 24px; height: 24px;
-      fill: currentColor;
-    }
-
-    .nav-item span {
+      gap: 3px;
       font-size: 10px;
-      font-weight: 500;
-    }
-
-    /* Экран Чтения */
-    #reader-screen {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: #0d0d12;
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-      padding-top: calc(var(--tg-safe-top) + 10px);
-      padding-bottom: calc(var(--tg-safe-bottom) + 10px);
-    }
-
-    #reader-screen.active {
-      display: flex;
-    }
-
-    .story-bar-container {
-      width: 100%;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.2);
-      margin-bottom: 10px;
-    }
-
-    .story-bar-fill {
-      height: 100%;
-      background: var(--accent-color);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    .reader-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 16px 10px 16px;
-    }
-
-    .reader-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      font-size: 16px;
-      line-height: 1.6;
-      color: #e0e0e0;
-    }
-
-    .reader-controls {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 16px;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 12px 20px;
-      border-radius: 12px;
-      border: none;
-      background: var(--accent-color);
-      color: #fff;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      justify-content: center;
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--border-glass);
-    }
-
-    /* Панель настроек чтения */
-    .settings-panel {
-      position: absolute;
-      bottom: 70px; left: 16px; right: 16px;
-      padding: 16px;
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 110;
-    }
-
-    .settings-panel.active {
-      display: flex;
-    }
-
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    .setting-row input[type="range"] {
-      width: 60%;
-    }
-
-    /* Минималистичный таймер в углу */
-    .corner-timer {
-      position: absolute;
-      top: calc(var(--tg-safe-top) + 12px);
-      right: 16px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      background: rgba(255, 45, 85, 0.2);
-      border: 1px solid rgba(ff, 45, 85, 0.4);
-      color: #ff2d55;
-      display: none;
-      z-index: 105;
-    }
-
-    /* Модальные окна */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-box {
-      width: 100%;
-      max-width: 320px;
-      padding: 24px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .modal-desc {
-      font-size: 14px;
       color: var(--text-sub);
+      cursor: pointer;
     }
+    .nav-item.active { color: var(--accent); }
+    .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
+
+    /* Экраны */
+    .screen { display: none; padding: 16px; padding-bottom: 80px; flex: 1; }
+    .screen.active { display: block; }
+
+    /* Карточки книг */
+    .book-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 10px; }
+    .book-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .book-cover { width: 100%; height: 160px; object-fit: cover; background: #1a1d29; }
+    .book-info { padding: 10px; }
+    .book-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .book-author { font-size: 12px; color: var(--text-sub); }
+    .heart-btn {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,0.5); border: none; border-radius: 50%;
+      width: 30px; height: 30px; color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .heart-btn.active { color: var(--danger); }
+
+    /* Элементы форм */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: #fff; font-size: 14px; outline: none;
+    }
+    button.btn-main {
+      width: 100%; padding: 14px; background: var(--accent);
+      border: none; border-radius: 10px; color: #fff;
+      font-weight: 600; cursor: pointer; margin-top: 10px;
+    }
+
+    /* Режим чтения */
+    #reader-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #000; display: none; overflow: hidden;
+    }
+    #reader-bg {
+      position: absolute; inset: 0; background-size: cover;
+      background-position: center; transition: filter 0.3s, opacity 0.3s;
+    }
+    #fx-canvas { position: absolute; inset: 0; pointer-events: none; }
+    .reader-header {
+      position: absolute; top: 0; left: 0; right: 0; padding: 12px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); z-index: 10;
+    }
+    .reader-content {
+      position: absolute; inset: 0; top: 60px; padding: 20px;
+      overflow-y: auto; color: #fff; line-height: 1.6; z-index: 5;
+    }
+    .reader-content * { user-select: text !important; }
+
+    /* Выпадающее меню настроек (...) */
+    .reader-settings-panel {
+      position: absolute; top: 50px; right: 16px; background: rgba(20, 24, 35, 0.95);
+      border-radius: 12px; padding: 16px; width: 260px;
+      backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
+      display: none; flex-direction: column; gap: 12px; z-index: 20; font-size: 13px;
+    }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; }
+    .setting-row input[type="range"] { width: 110px; }
+
+    /* Контекстная кнопка цитирования */
+    #quote-btn {
+      position: absolute; display: none; background: var(--accent);
+      color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px;
+      cursor: pointer; z-index: 30; transform: translate(-50%, -100%); margin-top: -8px;
+    }
+
+    /* Модалка с информацией о книге */
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      display: none; align-items: center; justify-content: center; z-index: 150; padding: 20px;
+    }
+    .modal-card {
+      background: #181b26; border-radius: 16px; padding: 20px; width: 100%; max-width: 340px; text-align: center;
+    }
+    .modal-cover { width: 120px; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+
+    .empty-state { text-align: center; color: var(--text-sub); padding: 40px 20px; font-size: 14px; }
   </style>
 </head>
 <body>
 
-  <!-- Фон и Анимации -->
-  <div id="app-background"></div>
-  <canvas id="particles-canvas"></canvas>
-
-  <!-- Аудио Эмбиент -->
-  <audio id="ambient-audio" loop></audio>
-
-  <!-- Главный Контейнер -->
-  <div id="app-container">
-    <header>
-      <div class="header-title" id="page-title">Главная</div>
-      <button class="fav-btn" style="position:relative; top:0; right:0;" onclick="toggleAudioMenu()">
-        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
-      </button>
-    </header>
-
-    <!-- Экран 1: Каталог -->
-    <div id="screen-home" class="screen active">
-      <div class="categories">
-        <button class="category-chip active" onclick="filterCategory('all', this)">Все</button>
-        <button class="category-chip" onclick="filterCategory('fantasy', this)">Фэнтези</button>
-        <button class="category-chip" onclick="filterCategory('scifi', this)">Приключения</button>
-      </div>
-      <div class="books-grid" id="books-list"></div>
-    </div>
-
-    <!-- Экран 2: Избранное -->
-    <div id="screen-fav" class="screen">
-      <div class="books-grid" id="fav-books-list"></div>
-    </div>
-
-    <!-- Экран 3: Конструктор (+) -->
-    <div id="screen-add" class="screen">
-      <div class="glass-card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-        <h3 style="font-size: 16px;">Добавить свою книгу</h3>
-        <input type="text" id="custom-title" placeholder="Название книги" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;">
-        <input type="text" id="custom-author" placeholder="Автор" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;">
-        <textarea id="custom-text" placeholder="Текст книги или импортируйте TXT..." rows="5" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;"></textarea>
-        <div style="display: flex; gap: 8px;">
-          <input type="file" id="txt-file-input" accept=".txt" style="display: none;" onchange="handleFileImport(event)">
-          <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('txt-file-input').click()">Импорт TXT</button>
-          <button class="btn" style="flex: 1;" onclick="saveCustomBook()">Сохранить</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Экран 4: Цели (🔥) -->
-    <div id="screen-goals" class="screen">
-      <div class="glass-card" style="padding: 16px; margin-bottom: 16px; text-align: center;">
-        <div style="font-size: 14px; color: var(--text-sub);">Серия дней чтения</div>
-        <div style="font-size: 28px; font-weight: 800; color: #ff2d55; margin: 4px 0;">🔥 5 Дней подряд</div>
-      </div>
-      <div class="glass-card" style="padding: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Выберите цель на сегодня:</h3>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(0)">
-            <span>Без времени (Просто почитать)</span>
-            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-          </button>
-          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(15)">
-            <span>15 Минут интенсивного чтения</span>
-            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-          </button>
-          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(25)">
-            <span>25 Минут чтения с таймером</span>
-            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Экран 5: Профиль (👤) -->
-    <div id="screen-profile" class="screen">
-      <div class="glass-card" style="padding: 16px; text-align: center; margin-bottom: 16px;">
-        <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent-color); margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">ЧТ</div>
-        <h3>Читатель Telegram</h3>
-        <p style="font-size: 12px; color: var(--text-sub);">Любитель атмосферных историй</p>
-      </div>
-      <div class="glass-card" style="padding: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Сохраненные цитаты</h3>
-        <div id="quotes-container" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-style: italic; color: var(--text-sub);">
-          Зажав текст во время чтения, вы можете сохранять интересные цитаты сюда.
-        </div>
-      </div>
-    </div>
-
-    <!-- Нижняя Навигация -->
-    <nav class="glass-nav">
-      <button class="nav-item active" onclick="switchTab('home', 'Главная', this)">
-        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Главная</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('fav', 'Избранное', this)">
-        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        <span>Избранное</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('add', 'Конструктор', this)">
-        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        <span>Создать</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('goals', 'Цели и Серия', this)">
-        <svg viewBox="0 0 24 24"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.18-3.32-9.61-6.5-13.33zM12 20c-3.31 0-6-2.69-6-6 0-1.53.58-3.04 1.54-4.18.23 1.83 1.72 3.18 3.56 3.18 1.93 0 3.5-1.57 3.5-3.5 0-.67-.19-1.3-.52-1.84 2.18 1.81 3.92 4.67 3.92 7.34 0 3.31-2.69 6-6 6z"/></svg>
-        <span>Цели</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('profile', 'Профиль', this)">
-        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <span>Профиль</span>
-      </button>
-    </nav>
+  <!-- Верхняя панель -->
+  <div class="top-bar">
+    <div class="top-title" id="page-title">Главная</div>
   </div>
 
-  <!-- Экран Читалки -->
+  <!-- 1. Главная -->
+  <div id="screen-home" class="screen active">
+    <div id="home-books" class="book-grid"></div>
+    <div id="home-empty" class="empty-state">У вас пока нет созданных книг.<br>Перейдите в раздел «Создать», чтобы добавить первую!</div>
+  </div>
+
+  <!-- 2. Избранное -->
+  <div id="screen-fav" class="screen">
+    <div id="fav-books" class="book-grid"></div>
+    <div id="fav-empty" class="empty-state">В Избранном пока ничего нет.</div>
+  </div>
+
+  <!-- 3. Конструктор книг -->
+  <div id="screen-create" class="screen">
+    <form id="create-book-form">
+      <div class="form-group">
+        <label>Название книги</label>
+        <input type="text" id="new-title" required placeholder="Введите название">
+      </div>
+      <div class="form-group">
+        <label>Автор</label>
+        <input type="text" id="new-author" required placeholder="Имя автора">
+      </div>
+      <div class="form-group">
+        <label>Категория</label>
+        <input type="text" id="new-category" placeholder="Фэнтези, Романтика и т.д.">
+      </div>
+      <div class="form-group">
+        <label>Обложка (URL картинки)</label>
+        <input type="url" id="new-cover" placeholder="https://site.com/cover.jpg">
+      </div>
+      <div class="form-group">
+        <label>Фон чтения (URL картинки)</label>
+        <input type="url" id="new-bg" placeholder="https://site.com/bg.jpg">
+      </div>
+      <div class="form-group">
+        <label>Звуковой эффект / Мелодия (URL MP3)</label>
+        <input type="url" id="new-audio" placeholder="https://site.com/sound.mp3">
+      </div>
+      <div class="form-group">
+        <label>Эффект атмосферы</label>
+        <select id="new-effect">
+          <option value="none">Без эффекта</option>
+          <option value="rain">Дождь</option>
+          <option value="snow">Снег</option>
+          <option value="blizzard">Метель</option>
+          <option value="dust">Пылинки</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Текст книги</label>
+        <textarea id="new-content" rows="6" required placeholder="Вставьте текст или главы..."></textarea>
+      </div>
+      <button type="submit" class="btn-main">Сохранить и создать</button>
+    </form>
+  </div>
+
+  <!-- 4. Цели -->
+  <div id="screen-goals" class="screen">
+    <div class="form-group">
+      <label>Выберите книгу для чтения</label>
+      <select id="goal-book-select"></select>
+    </div>
+    <div class="form-group">
+      <label>Время чтения (минут)</label>
+      <input type="number" id="goal-time" placeholder="Оставьте пустым, если без времени">
+    </div>
+    <button class="btn-main" onclick="saveGoal()">Установить цель / Напоминание</button>
+  </div>
+
+  <!-- 5. Профиль -->
+  <div id="screen-profile" class="screen">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+      <img id="user-avatar" src="https://via.placeholder.com/60" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+      <div>
+        <h3 id="user-name">Пользователь</h3>
+        <p id="user-bio" style="font-size: 12px; color: var(--text-sub);">Любитель книг</p>
+      </div>
+    </div>
+    <button class="btn-main" style="background: rgba(255,255,255,0.1); margin-bottom: 20px;" onclick="editProfile()">Редактировать профиль</button>
+
+    <h4 style="margin-bottom: 10px;">Статистика чтения</h4>
+    <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">Создано книг: <span id="stat-created" style="color:#fff;">0</span></p>
+
+    <h4 style="margin-bottom: 10px;">Сохранённые цитаты</h4>
+    <div id="quotes-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;"></div>
+
+    <h4 style="margin-bottom: 10px;">Мои созданные книги</h4>
+    <div id="my-books-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+  </div>
+
+  <!-- Модальное окно информации о книге -->
+  <div id="book-modal" class="modal">
+    <div class="modal-card">
+      <img id="modal-cover" class="modal-cover" src="">
+      <h3 id="modal-title"></h3>
+      <p id="modal-author" style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;"></p>
+      <p id="modal-cat" style="font-size: 11px; color: var(--accent); margin-bottom: 14px;"></p>
+      <button class="btn-main" id="modal-read-btn">Читать</button>
+      <button class="btn-main" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); margin-top: 6px;" onclick="closeModal()">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- Экран чтения -->
   <div id="reader-screen">
-    <div class="corner-timer" id="corner-timer">⏳ 25:00</div>
-    <div class="story-bar-container"><div class="story-bar-fill" id="story-bar"></div></div>
+    <div id="reader-bg"></div>
+    <canvas id="fx-canvas"></canvas>
+    
     <div class="reader-header">
-      <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="closeReader()">◄ Назад</button>
-      <div id="reader-book-title" style="font-size: 14px; font-weight: 600; text-align: center; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Название книги</div>
-      <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="toggleSettings()">АА</button>
+      <button onclick="closeReader()" style="background:none; border:none; color:#fff; font-size: 14px; cursor:pointer;">← Назад</button>
+      <span id="reader-book-title" style="font-size: 14px; font-weight: 600;"></span>
+      <button onclick="toggleReaderSettings()" style="background:none; border:none; color:#fff; font-size: 18px; cursor:pointer;">•••</button>
     </div>
 
-    <div class="reader-content" id="reader-text-container" onmouseup="saveSelectedQuote()">
-      <!-- Динамический текст страницы -->
-    </div>
-
-    <!-- Панель настроек (АА) -->
-    <div class="settings-panel glass-card" id="settings-panel">
+    <!-- Меню настроек (...) -->
+    <div id="reader-settings" class="reader-settings-panel">
       <div class="setting-row">
-        <span>Размер шрифта</span>
+        <span>Размер текста</span>
         <div>
-          <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="changeFontSize(-1)">A-</button>
-          <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="changeFontSize(1)">A+</button>
+          <button onclick="changeFontSize(-2)" style="padding: 2px 8px;">A-</button>
+          <button onclick="changeFontSize(2)" style="padding: 2px 8px;">A+</button>
         </div>
-      </div>
-      <div class="setting-row">
-        <span>Яркость фона</span>
-        <input type="range" id="brightness-slider" min="15" max="100" value="80" oninput="updateVisuals()">
-      </div>
-      <div class="setting-row">
-        <span>Размытие (Blur)</span>
-        <input type="range" id="blur-slider" min="0" max="25" value="10" oninput="updateVisuals()">
       </div>
       <div class="setting-row">
         <span>Автоскролл</span>
-        <button class="btn btn-secondary" id="autoscroll-btn" style="padding: 4px 10px;" onclick="toggleAutoScroll()">Выкл</button>
+        <button id="autoscroll-btn" onclick="toggleAutoscroll()">Выкл</button>
+      </div>
+      <div class="setting-row">
+        <span>Яркость фона</span>
+        <!-- Ограничение минимум 15% (0.15) -->
+        <input type="range" id="brightness-slider" min="0.15" max="1" step="0.05" value="1" oninput="updateBgFilter()">
+      </div>
+      <div class="setting-row">
+        <span>Размытие (Blur)</span>
+        <input type="range" id="blur-slider" min="0" max="10" step="1" value="0" oninput="updateBgFilter()">
+      </div>
+      <div class="setting-row">
+        <span>Звук</span>
+        <button id="sound-btn" onclick="toggleSound()">Вкл</button>
+      </div>
+      <div class="setting-row">
+        <span>Спецэффекты</span>
+        <button id="fx-btn" onclick="toggleFx()">Вкл</button>
       </div>
     </div>
 
-    <div class="reader-controls">
-      <button class="btn btn-secondary" style="flex: 1;" onclick="changePage(-1)">◄ Назад</button>
-      <button class="btn" style="flex: 1;" onclick="changePage(1)">Дальше ►</button>
+    <div class="reader-content" id="reader-text-container" onscroll="handleScroll()">
+      <div id="reader-text"></div>
     </div>
+
+    <!-- Кнопка «Цитировать» -->
+    <div id="quote-btn" onclick="addQuote()">Цитировать</div>
   </div>
 
-  <!-- Модальное Окно Таймаута -->
-  <div class="modal-overlay" id="timer-modal">
-    <div class="modal-box glass-card">
-      <div class="modal-title">Время цели истекло! 🔥</div>
-      <div class="modal-desc">Отличная работа! Отличный шаг к выполнению дневной нормы чтения.</div>
-      <button class="btn" onclick="closeModal('timer-modal')">📖 Продолжить чтение</button>
-      <button class="btn btn-secondary" onclick="closeModal('timer-modal'); closeReader();">🏠 На главную</button>
+  <!-- Нижняя навигация -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Главная</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('fav')">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>Избранное</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('create')">
+      <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <span>Создать</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('goals')">
+      <svg viewBox="0 0 24 24"><path d="M19.03 7.39l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7zm1-11h-2v6h6v-2h-4z"/></svg>
+      <span>Цели</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('profile')">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <span>Профиль</span>
     </div>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) { tg.expand(); }
+    if (tg) tg.expand();
 
-    // Данные Книг
-    const sampleBooks = [
-      {
-        id: 1,
-        title: "Тайна древнего замка",
-        author: "Фэнтези",
-        category: "fantasy",
-        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
-        pages: [
-          { text: "Густой туман опустился на старый замок. Ветер тихо шелестел листвой высоких деревьев...", bg: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000" },
-          { text: "Дверь с треском отворилась, и перед главным героем предстал длинный мрачный коридор...", bg: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1000" }
-        ]
+    // Состояние приложения
+    let state = {
+      books: JSON.parse(localStorage.getItem('app_books') || '[]'),
+      favorites: JSON.parse(localStorage.getItem('app_favs') || '[]'),
+      quotes: JSON.parse(localStorage.getItem('app_quotes') || '[]'),
+      user: JSON.parse(localStorage.getItem('app_user') || 'null') || {
+        name: tg?.initDataUnsafe?.user?.first_name || 'Пользователь',
+        photo: tg?.initDataUnsafe?.user?.photo_url || 'https://via.placeholder.com/60',
+        bio: 'Любитель книг'
       },
-      {
-        id: 2,
-        title: "Океан звезд",
-        author: "Приключения",
-        category: "scifi",
-        cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500",
-        pages: [
-          { text: "Корабль вышел из гиперпространства над неизвестной планетой с ярко-голубыми кольцами...", bg: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1000" }
-        ]
-      }
-    ];
-
-    let favorites = JSON.parse(localStorage.getItem('fav_books') || '[]');
-    let currentBook = null;
-    let currentPageIndex = 0;
-    let currentFontSize = 16;
-    let autoScrollInterval = null;
-    let goalTimerInterval = null;
+      currentBook: null,
+      fontSize: 16,
+      autoscroll: false,
+      autoscrollInterval: null,
+      soundEnabled: true,
+      fxEnabled: true,
+      audioObj: null
+    };
 
     // Инициализация
-    function init() {
-      renderBooks('all');
-      initParticles();
+    window.onload = () => {
+      renderUserProfile();
+      renderBooks();
+      setupQuoteListener();
+    };
+
+    function saveState() {
+      localStorage.setItem('app_books', JSON.stringify(state.books));
+      localStorage.setItem('app_favs', JSON.stringify(state.favorites));
+      localStorage.setItem('app_quotes', JSON.stringify(state.quotes));
+      localStorage.setItem('app_user', JSON.stringify(state.user));
     }
 
-    // Переключение Табов
-    function switchTab(tabId, title, btn) {
+    // Навигация
+    function switchTab(tab) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('screen-' + tabId).classList.add('active');
-      document.getElementById('page-title').innerText = title;
-      btn.classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      
+      const titles = { home: 'Главная', fav: 'Избранное', create: 'Конструктор', goals: 'Цели', profile: 'Профиль' };
+      document.getElementById('page-title').innerText = titles[tab];
+      
+      document.getElementById(`screen-${tab}`).classList.add('active');
+      event.currentTarget.classList.add('active');
 
-      if (tabId === 'fav') renderFavBooks();
+      if (tab === 'home' || tab === 'fav') renderBooks();
+      if (tab === 'goals') updateGoalSelect();
+      if (tab === 'profile') renderUserProfile();
     }
 
-    // Рендер Книг
-    function renderBooks(category) {
-      const container = document.getElementById('books-list');
-      container.innerHTML = '';
-      sampleBooks.forEach(book => {
-        if (category !== 'all' && book.category !== category) return;
-        const isFav = favorites.includes(book.id);
-        container.innerHTML += `
-          <div class="book-card glass-card" onclick="openBook(${book.id})">
-            <button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav(${book.id}, this)">
-              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-            </button>
-            <img src="${book.cover}" class="book-cover" alt="cover">
+    // Отрисовка книг
+    function renderBooks() {
+      const homeGrid = document.getElementById('home-books');
+      const favGrid = document.getElementById('fav-books');
+      homeGrid.innerHTML = '';
+      favGrid.innerHTML = '';
+
+      document.getElementById('home-empty').style.display = state.books.length ? 'none' : 'block';
+      
+      const favBooks = state.books.filter(b => state.favorites.includes(b.id));
+      document.getElementById('fav-empty').style.display = favBooks.length ? 'none' : 'block';
+
+      state.books.forEach(book => {
+        const isFav = state.favorites.includes(book.id);
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+          <button class="heart-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, '${book.id}')">♥</button>
+          <img class="book-cover" src="${book.cover || 'https://via.placeholder.com/150'}" onclick="openModal('${book.id}')">
+          <div class="book-info" onclick="openModal('${book.id}')">
             <div class="book-title">${book.title}</div>
             <div class="book-author">${book.author}</div>
           </div>
         `;
+        homeGrid.appendChild(card);
+
+        if (isFav) {
+          favGrid.appendChild(card.cloneNode(true));
+        }
       });
     }
 
-    function renderFavBooks() {
-      const container = document.getElementById('fav-books-list');
-      container.innerHTML = '';
-      const favList = sampleBooks.filter(b => favorites.includes(b.id));
-      if (favList.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-sub); grid-column: 1/-1;">Список избранного пуст.</div>';
-        return;
+    function toggleFav(e, id) {
+      e.stopPropagation();
+      const idx = state.favorites.indexOf(id);
+      if (idx > -1) state.favorites.splice(idx, 1);
+      else state.favorites.push(id);
+      saveState();
+      renderBooks();
+    }
+
+    // Создание книги
+    document.getElementById('create-book-form').onsubmit = (e) => {
+      e.preventDefault();
+      const newBook = {
+        id: Date.now().toString(),
+        title: document.getElementById('new-title').value,
+        author: document.getElementById('new-author').value,
+        category: document.getElementById('new-category').value,
+        cover: document.getElementById('new-cover').value,
+        bg: document.getElementById('new-bg').value,
+        audio: document.getElementById('new-audio').value,
+        effect: document.getElementById('new-effect').value,
+        content: document.getElementById('new-content').value,
+        createdAt: new Date().toLocaleDateString()
+      };
+      state.books.push(newBook);
+      saveState();
+      e.target.reset();
+      switchTab('home');
+    };
+
+    // Модальное окно
+    function openModal(id) {
+      state.currentBook = state.books.find(b => b.id === id);
+      document.getElementById('modal-cover').src = state.currentBook.cover || 'https://via.placeholder.com/150';
+      document.getElementById('modal-title').innerText = state.currentBook.title;
+      document.getElementById('modal-author').innerText = state.currentBook.author;
+      document.getElementById('modal-cat').innerText = state.currentBook.category || 'Без категории';
+      document.getElementById('modal-read-btn').onclick = () => { closeModal(); startReading(); };
+      document.getElementById('book-modal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('book-modal').style.display = 'none'; }
+
+    // Режим чтения
+    function startReading() {
+      const book = state.currentBook;
+      document.getElementById('reader-book-title').innerText = book.title;
+      document.getElementById('reader-text').innerText = book.content;
+      
+      const readerBg = document.getElementById('reader-bg');
+      if (book.bg) readerBg.style.backgroundImage = `url(${book.bg})`;
+      else readerBg.style.backgroundImage = 'none';
+
+      document.getElementById('reader-screen').style.display = 'block';
+
+      // Аудио
+      if (book.audio && state.soundEnabled) {
+        if (state.audioObj) state.audioObj.pause();
+        state.audioObj = new Audio(book.audio);
+        state.audioObj.loop = true;
+        state.audioObj.play().catch(()=>{});
       }
-      favList.forEach(book => {
-        container.innerHTML += `
-          <div class="book-card glass-card" onclick="openBook(${book.id})">
-            <img src="${book.cover}" class="book-cover" alt="cover">
-            <div class="book-title">${book.title}</div>
-            <div class="book-author">${book.author}</div>
-          </div>
-        `;
-      });
-    }
 
-    function filterCategory(cat, btn) {
-      document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      renderBooks(cat);
-    }
-
-    function toggleFav(id, btn) {
-      if (favorites.includes(id)) {
-        favorites = favorites.filter(favId => favId !== id);
-        btn.classList.remove('active');
-      } else {
-        favorites.push(id);
-        btn.classList.add('active');
+      // Эффекты
+      if (book.effect && book.effect !== 'none' && state.fxEnabled) {
+        startFx(book.effect);
       }
-      localStorage.setItem('fav_books', JSON.stringify(favorites));
-    }
-
-    // Читалка
-    function openBook(id) {
-      currentBook = sampleBooks.find(b => b.id === id);
-      currentPageIndex = 0;
-      document.getElementById('reader-book-title').innerText = currentBook.title;
-      document.getElementById('reader-screen').classList.add('active');
-      loadPage(0);
     }
 
     function closeReader() {
-      document.getElementById('reader-screen').classList.remove('active');
-      clearInterval(autoScrollInterval);
+      document.getElementById('reader-screen').style.display = 'none';
+      if (state.audioObj) state.audioObj.pause();
+      stopFx();
+      if (state.autoscrollInterval) clearInterval(state.autoscrollInterval);
     }
 
-    function loadPage(index) {
-      if (index < 0 || index >= currentBook.pages.length) return;
-      currentPageIndex = index;
-      const page = currentBook.pages[index];
-      
-      document.getElementById('reader-text-container').innerText = page.text;
-      document.getElementById('app-background').style.backgroundImage = `url('${page.bg}')`;
-
-      // Обновление Story-Bar
-      const progress = ((index + 1) / currentBook.pages.length) * 100;
-      document.getElementById('story-bar').style.width = progress + '%';
-    }
-
-    function changePage(delta) {
-      const nextIndex = currentPageIndex + delta;
-      if (nextIndex >= 0 && nextIndex < currentBook.pages.length) {
-        loadPage(nextIndex);
-      } else if (nextIndex >= currentBook.pages.length) {
-        alert("Это последняя страница");
-      }
-    }
-
-    function toggleSettings() {
-      const panel = document.getElementById('settings-panel');
-      panel.classList.toggle('active');
+    function toggleReaderSettings() {
+      const panel = document.getElementById('reader-settings');
+      panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
     }
 
     function changeFontSize(delta) {
-      currentFontSize += delta;
-      document.getElementById('reader-text-container').style.fontSize = currentFontSize + 'px';
+      state.fontSize += delta;
+      document.getElementById('reader-text').style.fontSize = state.fontSize + 'px';
     }
 
-    function updateVisuals() {
-      const brightness = document.getElementById('brightness-slider').value;
-      const blur = document.getElementById('blur-slider').value;
-      document.getElementById('app-background').style.filter = `brightness(${brightness}%) blur(${blur}px)`;
-    }
-
-    function toggleAutoScroll() {
+    function toggleAutoscroll() {
+      state.autoscroll = !state.autoscroll;
       const btn = document.getElementById('autoscroll-btn');
+      btn.innerText = state.autoscroll ? 'Вкл' : 'Выкл';
+      
       const container = document.getElementById('reader-text-container');
-      if (autoScrollInterval) {
-        clearInterval(autoScrollInterval);
-        autoScrollInterval = null;
-        btn.innerText = 'Выкл';
-      } else {
-        btn.innerText = 'Вкл';
-        autoScrollInterval = setInterval(() => {
+      if (state.autoscroll) {
+        state.autoscrollInterval = setInterval(() => {
           container.scrollTop += 1;
-        }, 50);
+        }, 30);
+      } else {
+        clearInterval(state.autoscrollInterval);
       }
     }
 
-    // Таймер Целей
-    function startGoalTimer(minutes) {
-      if (minutes === 0) {
-        openBook(1);
-        return;
-      }
-      openBook(1);
-      const timerEl = document.getElementById('corner-timer');
-      timerEl.style.display = 'block';
-      let secondsLeft = minutes * 60;
-
-      clearInterval(goalTimerInterval);
-      goalTimerInterval = setInterval(() => {
-        secondsLeft--;
-        const m = Math.floor(secondsLeft / 60);
-        const s = secondsLeft % 60;
-        timerEl.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
-
-        if (secondsLeft <= 0) {
-          clearInterval(goalTimerInterval);
-          timerEl.style.display = 'none';
-          document.getElementById('timer-modal').classList.add('active');
-        }
-      }, 1000);
+    function updateBgFilter() {
+      const bright = document.getElementById('brightness-slider').value; // мин 0.15
+      const blur = document.getElementById('blur-slider').value;
+      const bg = document.getElementById('reader-bg');
+      bg.style.filter = `brightness(${bright}) blur(${blur}px)`;
     }
 
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
-    }
-
-    // Сохранение Цитат
-    function saveSelectedQuote() {
-      const selectedText = window.getSelection().toString().trim();
-      if (selectedText.length > 5) {
-        const quotesContainer = document.getElementById('quotes-container');
-        quotesContainer.innerHTML += `<div style="padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 2px solid var(--accent-color);">"${selectedText}"</div>`;
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      document.getElementById('sound-btn').innerText = state.soundEnabled ? 'Вкл' : 'Выкл';
+      if (state.audioObj) {
+        if (state.soundEnabled) state.audioObj.play().catch(()=>{});
+        else state.audioObj.pause();
       }
     }
 
-    // Создание своей книги
-    function saveCustomBook() {
-      const title = document.getElementById('custom-title').value;
-      const author = document.getElementById('custom-author').value;
-      const text = document.getElementById('custom-text').value;
-
-      if (!title || !text) {
-        alert('Заполните название и текст!');
-        return;
-      }
-
-      const newBook = {
-        id: Date.now(),
-        title: title,
-        author: author || 'Пользователь',
-        category: 'fantasy',
-        cover: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500',
-        pages: [{ text: text, bg: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1000' }]
-      };
-
-      sampleBooks.push(newBook);
-      renderBooks('all');
-      alert('Книга успешно добавлена!');
-      switchTab('home', 'Главная', document.querySelectorAll('.nav-item')[0]);
+    function toggleFx() {
+      state.fxEnabled = !state.fxEnabled;
+      document.getElementById('fx-btn').innerText = state.fxEnabled ? 'Вкл' : 'Выкл';
+      const canvas = document.getElementById('fx-canvas');
+      canvas.style.display = state.fxEnabled ? 'block' : 'none';
     }
 
-    function handleFileImport(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        document.getElementById('custom-text').value = evt.target.result;
-      };
-      reader.readAsText(file);
-    }
-
-    // Частицы на Canvas
-    function initParticles() {
-      const canvas = document.getElementById('particles-canvas');
+    // Системы частиц (FX)
+    let fxAnimationId = null;
+    function startFx(type) {
+      const canvas = document.getElementById('fx-canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      const particles = Array.from({ length: 35 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: Math.random() * 0.5 + 0.2
-      }));
+      let particles = [];
+      const count = type === 'blizzard' ? 150 : 50;
 
-      function animate() {
+      for(let i=0; i<count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: type === 'rain' ? 1 : Math.random() * 3 + 1,
+          l: Math.random() * 15 + 5,
+          sy: type === 'rain' ? Math.random() * 10 + 10 : Math.random() * 2 + 1,
+          sx: type === 'blizzard' ? Math.random() * 4 + 2 : Math.random() * 1 - 0.5
+        });
+      }
+
+      function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillStyle = type === 'dust' ? 'rgba(255,255,200,0.5)' : 'rgba(255,255,255,0.7)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+
         particles.forEach(p => {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fill();
-          p.x += p.dx;
-          p.y += p.dy;
+          if (type === 'rain') {
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x, p.y + p.l);
+            ctx.stroke();
+          } else {
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          p.y += p.sy;
+          p.x += p.sx;
+
           if (p.y > canvas.height) p.y = 0;
-          if (p.x > canvas.width || p.x < 0) p.x = Math.random() * canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.x < 0) p.x = canvas.width;
         });
-        requestAnimationFrame(animate);
+
+        fxAnimationId = requestAnimationFrame(draw);
       }
-      animate();
+      draw();
     }
 
-    init();
+    function stopFx() {
+      if (fxAnimationId) cancelAnimationFrame(fxAnimationId);
+    }
+
+    // Логика Цитат
+    function setupQuoteListener() {
+      const btn = document.getElementById('quote-btn');
+      document.addEventListener('selectionchange', () => {
+        const sel = window.getSelection();
+        if (sel.toString().trim().length > 0 && document.getElementById('reader-screen').style.display === 'block') {
+          const range = sel.getRangeAt(0);
+          const rect = range.getBoundingClientRect();
+          btn.style.top = rect.top + 'px';
+          btn.style.left = (rect.left + rect.width / 2) + 'px';
+          btn.style.display = 'block';
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+    }
+
+    function addQuote() {
+      const text = window.getSelection().toString().trim();
+      if (text && state.currentBook) {
+        state.quotes.push({
+          bookTitle: state.currentBook.title,
+          text: text
+        });
+        saveState();
+        document.getElementById('quote-btn').style.display = 'none';
+        alert('Цитата сохранена в Профиль!');
+      }
+    }
+
+    // Профиль
+    function renderUserProfile() {
+      document.getElementById('user-name').innerText = state.user.name;
+      document.getElementById('user-avatar').src = state.user.photo;
+      document.getElementById('user-bio').innerText = state.user.bio;
+      document.getElementById('stat-created').innerText = state.books.length;
+
+      const qList = document.getElementById('quotes-list');
+      qList.innerHTML = state.quotes.length ? '' : '<div style="font-size:12px; color:var(--text-sub);">Нет сохранённых цитат</div>';
+      state.quotes.forEach(q => {
+        qList.innerHTML += `<div style="background:var(--card-bg); padding:10px; border-radius:8px; font-size:12px;">
+          <strong style="color:var(--accent);">${q.bookTitle}:</strong> "${q.text}"
+        </div>`;
+      });
+
+      const myBooks = document.getElementById('my-books-list');
+      myBooks.innerHTML = state.books.length ? '' : '<div style="font-size:12px; color:var(--text-sub);">Вы ещё не создали ни одной книги</div>';
+      state.books.forEach(b => {
+        myBooks.innerHTML += `<div style="background:var(--card-bg); padding:10px; border-radius:8px; font-size:12px; display:flex; justify-content:space-between;">
+          <span>${b.title}</span>
+          <span style="color:var(--text-sub);">${b.createdAt || 'Неизвестно'}</span>
+        </div>`;
+      });
+    }
+
+    function editProfile() {
+      const newName = prompt('Введите имя:', state.user.name);
+      if (newName) state.user.name = newName;
+      const newBio = prompt('Описание профиля:', state.user.bio);
+      if (newBio) state.user.bio = newBio;
+      saveState();
+      renderUserProfile();
+    }
+
+    // Цели
+    function updateGoalSelect() {
+      const select = document.getElementById('goal-book-select');
+      select.innerHTML = '';
+      state.books.forEach(b => {
+        select.innerHTML += `<option value="${b.title}">${b.title}</option>`;
+      });
+    }
+
+    function saveGoal() {
+      const bookTitle = document.getElementById('goal-book-select').value;
+      const time = document.getElementById('goal-time').value;
+      
+      const payload = {
+        action: 'set_goal',
+        book: bookTitle,
+        time_minutes: time || null
+      };
+
+      if (tg && tg.sendData) {
+        tg.sendData(JSON.stringify(payload));
+      } else {
+        alert(`Цель установлена! Книга: ${bookTitle} ${time ? `, Время: ${time} мин.` : ''}`);
+      }
+    }
   </script>
 </body>
 </html>
-
