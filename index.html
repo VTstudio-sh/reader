@@ -53,7 +53,7 @@
       pointer-events: none;
     }
 
-    /* Основной контейнер */
+    /* Основной контейнер с учетом Safe Area */
     #app-container {
       position: relative;
       z-index: 3;
@@ -64,6 +64,7 @@
       padding-bottom: calc(var(--tg-safe-bottom) + 70px);
     }
 
+    /* Элементы Glassmorphism */
     .glass-card {
       background: var(--bg-glass);
       backdrop-filter: blur(20px);
@@ -80,6 +81,7 @@
       border-top: 1px solid var(--border-glass);
     }
 
+    /* Шапка приложения */
     header {
       padding: 0 16px 12px 16px;
       display: flex;
@@ -93,6 +95,7 @@
       letter-spacing: -0.5px;
     }
 
+    /* Контентные экраны */
     .screen {
       display: none;
       flex: 1;
@@ -104,6 +107,7 @@
       display: block;
     }
 
+    /* Категории */
     .categories {
       display: flex;
       gap: 8px;
@@ -129,6 +133,7 @@
       box-shadow: 0 0 12px var(--accent-glow);
     }
 
+    /* Сетка книг */
     .books-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -166,13 +171,16 @@
       transition: transform 0.2s ease;
     }
 
-    .fav-btn:active { transform: scale(1.3); }
+    .fav-btn:active {
+      transform: scale(1.3);
+    }
 
     .fav-btn svg {
       width: 18px; height: 18px;
       fill: none;
       stroke: #fff;
       stroke-width: 2;
+      transition: fill 0.2s ease, stroke 0.2s ease;
     }
 
     .fav-btn.active svg {
@@ -191,6 +199,7 @@
       color: var(--text-sub);
     }
 
+    /* Нижняя панель навигации */
     nav {
       position: absolute;
       bottom: 0; left: 0; width: 100%;
@@ -214,29 +223,18 @@
       width: 20%;
     }
 
-    .nav-item.active { color: var(--accent-color); }
-    .nav-item svg { width: 24px; height: 24px; fill: currentColor; }
-    .nav-item span { font-size: 10px; font-weight: 500; }
-
-    /* Поля ввода формы */
-    input[type="text"], input[type="number"], select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-glass);
-      background: rgba(0,0,0,0.3);
-      color: #fff;
-      font-size: 14px;
+    .nav-item.active {
+      color: var(--accent-color);
     }
 
-    .chapter-box {
-      border: 1px dashed var(--border-glass);
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .nav-item svg {
+      width: 24px; height: 24px;
+      fill: currentColor;
+    }
+
+    .nav-item span {
+      font-size: 10px;
+      font-weight: 500;
     }
 
     /* Экран Чтения */
@@ -251,7 +249,9 @@
       padding-bottom: calc(var(--tg-safe-bottom) + 10px);
     }
 
-    #reader-screen.active { display: flex; }
+    #reader-screen.active {
+      display: flex;
+    }
 
     .story-bar-container {
       width: 100%;
@@ -281,7 +281,6 @@
       font-size: 16px;
       line-height: 1.6;
       color: #e0e0e0;
-      user-select: text;
     }
 
     .reader-controls {
@@ -311,10 +310,10 @@
       border: 1px solid var(--border-glass);
     }
 
+    /* Панель настроек чтения */
     .settings-panel {
       position: absolute;
-      top: calc(var(--tg-safe-top) + 50px); right: 16px;
-      width: 280px;
+      bottom: 70px; left: 16px; right: 16px;
       padding: 16px;
       display: none;
       flex-direction: column;
@@ -322,32 +321,38 @@
       z-index: 110;
     }
 
-    .settings-panel.active { display: flex; }
+    .settings-panel.active {
+      display: flex;
+    }
 
     .setting-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 14px;
     }
 
-    .setting-row input[type="range"] { width: 50%; }
+    .setting-row input[type="range"] {
+      width: 60%;
+    }
 
-    /* Выпадающий элемент контекстного меню цитирования */
-    #quote-tooltip {
-      position: fixed;
-      display: none;
-      z-index: 300;
-      background: var(--accent-color);
-      color: #fff;
+    /* Минималистичный таймер в углу */
+    .corner-timer {
+      position: absolute;
+      top: calc(var(--tg-safe-top) + 12px);
+      right: 16px;
       padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: 20px;
       font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      font-weight: 700;
+      background: rgba(255, 45, 85, 0.2);
+      border: 1px solid rgba(ff, 45, 85, 0.4);
+      color: #ff2d55;
+      display: none;
+      z-index: 105;
     }
 
+    /* Модальные окна */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -360,7 +365,9 @@
       padding: 20px;
     }
 
-    .modal-overlay.active { display: flex; }
+    .modal-overlay.active {
+      display: flex;
+    }
 
     .modal-box {
       width: 100%;
@@ -371,26 +378,43 @@
       flex-direction: column;
       gap: 16px;
     }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+    }
   </style>
 </head>
 <body>
 
+  <!-- Фон и Анимации -->
   <div id="app-background"></div>
   <canvas id="particles-canvas"></canvas>
 
+  <!-- Аудио Эмбиент -->
   <audio id="ambient-audio" loop></audio>
 
-  <!-- Всплывающая кнопка для цитирования -->
-  <div id="quote-tooltip" onclick="addQuoteFromSelection()">💬 Цитировать</div>
-
+  <!-- Главный Контейнер -->
   <div id="app-container">
     <header>
       <div class="header-title" id="page-title">Главная</div>
+      <button class="fav-btn" style="position:relative; top:0; right:0;" onclick="toggleAudioMenu()">
+        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+      </button>
     </header>
 
     <!-- Экран 1: Каталог -->
     <div id="screen-home" class="screen active">
-      <div class="categories" id="categories-bar"></div>
+      <div class="categories">
+        <button class="category-chip active" onclick="filterCategory('all', this)">Все</button>
+        <button class="category-chip" onclick="filterCategory('fantasy', this)">Фэнтези</button>
+        <button class="category-chip" onclick="filterCategory('scifi', this)">Приключения</button>
+      </div>
       <div class="books-grid" id="books-list"></div>
     </div>
 
@@ -399,66 +423,58 @@
       <div class="books-grid" id="fav-books-list"></div>
     </div>
 
-    <!-- Экран 3: Конструктор -->
+    <!-- Экран 3: Конструктор (+) -->
     <div id="screen-add" class="screen">
       <div class="glass-card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-        <h3 style="font-size: 16px;">Создать новую книгу</h3>
-        <input type="text" id="custom-title" placeholder="Название книги">
-        <input type="text" id="custom-author" placeholder="Автор">
-        <input type="text" id="custom-category" placeholder="Категория (например: Фэнтези, Поэзия)">
-        
-        <label style="font-size: 12px; color: var(--text-sub);">Обложка книги:</label>
-        <input type="file" id="cover-file-input" accept="image/*">
-
-        <h4 style="font-size: 14px; margin-top: 10px;">Главы / Содержание</h4>
-        <div id="chapters-container"></div>
-        <button class="btn btn-secondary" onclick="addChapterField()">+ Добавить главу</button>
-
-        <button class="btn" style="margin-top: 10px;" onclick="saveCustomBook()">Сохранить книгу</button>
-      </div>
-    </div>
-
-    <!-- Экран 4: Цели -->
-    <div id="screen-goals" class="screen">
-      <div class="glass-card" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Настроить цель чтения:</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <select id="goal-book-select"></select>
-          <input type="number" id="goal-time-input" placeholder="Время чтения в минутах (необязательно)">
-          <button class="btn" onclick="setCustomGoal()">Установить цель / Напомнить</button>
+        <h3 style="font-size: 16px;">Добавить свою книгу</h3>
+        <input type="text" id="custom-title" placeholder="Название книги" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;">
+        <input type="text" id="custom-author" placeholder="Автор" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;">
+        <textarea id="custom-text" placeholder="Текст книги или импортируйте TXT..." rows="5" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); color: #fff;"></textarea>
+        <div style="display: flex; gap: 8px;">
+          <input type="file" id="txt-file-input" accept=".txt" style="display: none;" onchange="handleFileImport(event)">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('txt-file-input').click()">Импорт TXT</button>
+          <button class="btn" style="flex: 1;" onclick="saveCustomBook()">Сохранить</button>
         </div>
       </div>
-      <div id="active-goal-box" class="glass-card" style="padding: 16px; display: none; text-align: center;">
-        <div style="font-size: 14px; color: var(--text-sub);">Активная цель:</div>
-        <div id="active-goal-text" style="font-size: 18px; font-weight: bold; margin: 8px 0;"></div>
-        <button class="btn btn-secondary" onclick="cancelGoal()">Отменить цель</button>
+    </div>
+
+    <!-- Экран 4: Цели (🔥) -->
+    <div id="screen-goals" class="screen">
+      <div class="glass-card" style="padding: 16px; margin-bottom: 16px; text-align: center;">
+        <div style="font-size: 14px; color: var(--text-sub);">Серия дней чтения</div>
+        <div style="font-size: 28px; font-weight: 800; color: #ff2d55; margin: 4px 0;">🔥 5 Дней подряд</div>
+      </div>
+      <div class="glass-card" style="padding: 16px;">
+        <h3 style="font-size: 15px; margin-bottom: 10px;">Выберите цель на сегодня:</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(0)">
+            <span>Без времени (Просто почитать)</span>
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(15)">
+            <span>15 Минут интенсивного чтения</span>
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+          </button>
+          <button class="btn btn-secondary" style="justify-content: space-between;" onclick="startGoalTimer(25)">
+            <span>25 Минут чтения с таймером</span>
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Экран 5: Профиль -->
+    <!-- Экран 5: Профиль (👤) -->
     <div id="screen-profile" class="screen">
-      <div class="glass-card" style="padding: 16px; text-align: center; margin-bottom: 16px; position: relative;">
-        <img id="profile-avatar" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin: 0 auto 8px auto; display: block; border: 2px solid var(--accent-color);">
-        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="updateAvatar(event)">
-        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px; margin: 0 auto 8px auto;" onclick="document.getElementById('avatar-file-input').click()">Изменить фото</button>
-        
-        <input type="text" id="profile-name-input" style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 6px;" onchange="saveProfileData()">
-        <textarea id="profile-bio-input" placeholder="Описание профиля..." rows="2" style="text-align: center; font-size: 12px; color: var(--text-sub);" onchange="saveProfileData()"></textarea>
+      <div class="glass-card" style="padding: 16px; text-align: center; margin-bottom: 16px;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent-color); margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">ЧТ</div>
+        <h3>Читатель Telegram</h3>
+        <p style="font-size: 12px; color: var(--text-sub);">Любитель атмосферных историй</p>
       </div>
-
-      <div class="glass-card" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Статистика чтения 📊</h3>
-        <div id="profile-stats" style="font-size: 13px; color: var(--text-sub); display: flex; flex-direction: column; gap: 6px;"></div>
-      </div>
-
-      <div class="glass-card" style="padding: 16px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Мои созданные книги 📚</h3>
-        <div id="my-books-list" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;"></div>
-      </div>
-
       <div class="glass-card" style="padding: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Сохраненные цитаты 💬</h3>
-        <div id="quotes-container" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;"></div>
+        <h3 style="font-size: 15px; margin-bottom: 10px;">Сохраненные цитаты</h3>
+        <div id="quotes-container" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-style: italic; color: var(--text-sub);">
+          Зажав текст во время чтения, вы можете сохранять интересные цитаты сюда.
+        </div>
       </div>
     </div>
 
@@ -476,7 +492,7 @@
         <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         <span>Создать</span>
       </button>
-      <button class="nav-item" onclick="switchTab('goals', 'Цели', this)">
+      <button class="nav-item" onclick="switchTab('goals', 'Цели и Серия', this)">
         <svg viewBox="0 0 24 24"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.18-3.32-9.61-6.5-13.33zM12 20c-3.31 0-6-2.69-6-6 0-1.53.58-3.04 1.54-4.18.23 1.83 1.72 3.18 3.56 3.18 1.93 0 3.5-1.57 3.5-3.5 0-.67-.19-1.3-.52-1.84 2.18 1.81 3.92 4.67 3.92 7.34 0 3.31-2.69 6-6 6z"/></svg>
         <span>Цели</span>
       </button>
@@ -487,61 +503,40 @@
     </nav>
   </div>
 
-  <!-- Модалка подробностей книги перед чтением -->
-  <div class="modal-overlay" id="book-info-modal">
-    <div class="modal-box glass-card" style="max-width: 340px;">
-      <img id="info-modal-cover" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px;">
-      <div id="info-modal-title" style="font-size: 18px; font-weight: bold;"></div>
-      <div id="info-modal-author" style="font-size: 13px; color: var(--text-sub);"></div>
-      <div id="info-modal-cat" style="font-size: 12px; color: var(--accent-color);"></div>
-      <div style="text-align: left; margin-top: 8px;">
-        <label style="font-size: 12px; color: var(--text-sub);">Содержание / Главы:</label>
-        <select id="info-modal-chapters" style="margin-top: 4px;"></select>
-      </div>
-      <button class="btn" style="margin-top: 10px;" onclick="startReadingFromModal()">📖 Читать</button>
-      <button class="btn btn-secondary" onclick="closeModal('book-info-modal')">Закрыть</button>
-    </div>
-  </div>
-
   <!-- Экран Читалки -->
   <div id="reader-screen">
+    <div class="corner-timer" id="corner-timer">⏳ 25:00</div>
     <div class="story-bar-container"><div class="story-bar-fill" id="story-bar"></div></div>
     <div class="reader-header">
       <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="closeReader()">◄ Назад</button>
-      <div id="reader-book-title" style="font-size: 14px; font-weight: 600; text-align: center; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
-      <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 16px; font-weight: bold;" onclick="toggleSettings()">⋮</button>
+      <div id="reader-book-title" style="font-size: 14px; font-weight: 600; text-align: center; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Название книги</div>
+      <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="toggleSettings()">АА</button>
     </div>
 
-    <div class="reader-content" id="reader-text-container" onmouseup="checkSelection(event)" ontouchend="checkSelection(event)"></div>
+    <div class="reader-content" id="reader-text-container" onmouseup="saveSelectedQuote()">
+      <!-- Динамический текст страницы -->
+    </div>
 
-    <!-- Троеточие меню настроек -->
+    <!-- Панель настроек (АА) -->
     <div class="settings-panel glass-card" id="settings-panel">
       <div class="setting-row">
-        <span>Размер текста</span>
+        <span>Размер шрифта</span>
         <div>
-          <button class="btn btn-secondary" style="padding: 2px 8px; inline-block;" onclick="changeFontSize(-1)">-</button>
-          <button class="btn btn-secondary" style="padding: 2px 8px; inline-block;" onclick="changeFontSize(1)">+</button>
+          <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="changeFontSize(-1)">A-</button>
+          <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="changeFontSize(1)">A+</button>
         </div>
-      </div>
-      <div class="setting-row">
-        <span>Автоскролл</span>
-        <button class="btn btn-secondary" id="autoscroll-btn" style="padding: 4px 8px;" onclick="toggleAutoScroll()">Выкл</button>
       </div>
       <div class="setting-row">
         <span>Яркость фона</span>
         <input type="range" id="brightness-slider" min="15" max="100" value="80" oninput="updateVisuals()">
       </div>
       <div class="setting-row">
-        <span>Размытие фона</span>
+        <span>Размытие (Blur)</span>
         <input type="range" id="blur-slider" min="0" max="25" value="10" oninput="updateVisuals()">
       </div>
       <div class="setting-row">
-        <span>Звук</span>
-        <button class="btn btn-secondary" id="sound-btn" style="padding: 4px 8px;" onclick="toggleSound()">Вкл</button>
-      </div>
-      <div class="setting-row">
-        <span>Эффекты</span>
-        <button class="btn btn-secondary" id="effects-btn" style="padding: 4px 8px;" onclick="toggleEffects()">Вкл</button>
+        <span>Автоскролл</span>
+        <button class="btn btn-secondary" id="autoscroll-btn" style="padding: 4px 10px;" onclick="toggleAutoScroll()">Выкл</button>
       </div>
     </div>
 
@@ -551,62 +546,55 @@
     </div>
   </div>
 
+  <!-- Модальное Окно Таймаута -->
+  <div class="modal-overlay" id="timer-modal">
+    <div class="modal-box glass-card">
+      <div class="modal-title">Время цели истекло! 🔥</div>
+      <div class="modal-desc">Отличная работа! Отличный шаг к выполнению дневной нормы чтения.</div>
+      <button class="btn" onclick="closeModal('timer-modal')">📖 Продолжить чтение</button>
+      <button class="btn btn-secondary" onclick="closeModal('timer-modal'); closeReader();">🏠 На главную</button>
+    </div>
+  </div>
+
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); }
 
-    // Хранилище данных только пользовательских книг
-    let customBooks = JSON.parse(localStorage.getItem('my_custom_books') || '[]');
+    // Данные Книг
+    const sampleBooks = [
+      {
+        id: 1,
+        title: "Тайна древнего замка",
+        author: "Фэнтези",
+        category: "fantasy",
+        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
+        pages: [
+          { text: "Густой туман опустился на старый замок. Ветер тихо шелестел листвой высоких деревьев...", bg: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000" },
+          { text: "Дверь с треском отворилась, и перед главным героем предстал длинный мрачный коридор...", bg: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1000" }
+        ]
+      },
+      {
+        id: 2,
+        title: "Океан звезд",
+        author: "Приключения",
+        category: "scifi",
+        cover: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500",
+        pages: [
+          { text: "Корабль вышел из гиперпространства над неизвестной планетой с ярко-голубыми кольцами...", bg: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1000" }
+        ]
+      }
+    ];
+
     let favorites = JSON.parse(localStorage.getItem('fav_books') || '[]');
-    let savedQuotes = JSON.parse(localStorage.getItem('saved_quotes') || '[]');
-    let profileData = JSON.parse(localStorage.getItem('user_profile') || '{}');
-    
-    let selectedBookForInfo = null;
     let currentBook = null;
     let currentPageIndex = 0;
     let currentFontSize = 16;
     let autoScrollInterval = null;
-    
-    let soundEnabled = true;
-    let effectsEnabled = true;
-    let currentEffect = 'particles';
-    let particleAnimationId = null;
+    let goalTimerInterval = null;
 
-    // Инициализация Telegram Профиля
-    function initProfile() {
-      const tgUser = tg?.initDataUnsafe?.user;
-      const defaultName = tgUser ? `${tgUser.first_name} ${tgUser.last_name || ''}`.trim() : 'Читатель';
-      const defaultAvatar = tgUser?.photo_url || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
-      document.getElementById('profile-name-input').value = profileData.name || defaultName;
-      document.getElementById('profile-bio-input').value = profileData.bio || 'Любитель книг';
-      document.getElementById('profile-avatar').src = profileData.avatar || defaultAvatar;
-    }
-
-    function saveProfileData() {
-      profileData.name = document.getElementById('profile-name-input').value;
-      profileData.bio = document.getElementById('profile-bio-input').value;
-      localStorage.setItem('user_profile', JSON.stringify(profileData));
-    }
-
-    function updateAvatar(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          profileData.avatar = evt.target.result;
-          document.getElementById('profile-avatar').src = evt.target.result;
-          saveProfileData();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
+    // Инициализация
     function init() {
-      initProfile();
-      renderCategories();
       renderBooks('all');
-      renderQuotes();
       initParticles();
     }
 
@@ -619,40 +607,17 @@
       btn.classList.add('active');
 
       if (tabId === 'fav') renderFavBooks();
-      if (tabId === 'profile') renderProfileTab();
-      if (tabId === 'goals') renderGoalsTab();
     }
 
-    // Категории
-    function renderCategories() {
-      const bar = document.getElementById('categories-bar');
-      const cats = ['all', ...new Set(customBooks.map(b => b.category).filter(Boolean))];
-      bar.innerHTML = cats.map(c => `
-        <button class="category-chip ${c === 'all' ? 'active' : ''}" onclick="filterCategory('${c}', this)">
-          ${c === 'all' ? 'Все' : c}
-        </button>
-      `).join('');
-    }
-
-    function filterCategory(cat, btn) {
-      document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      renderBooks(cat);
-    }
-
-    // Рендер каталога
+    // Рендер Книг
     function renderBooks(category) {
       const container = document.getElementById('books-list');
       container.innerHTML = '';
-      if (customBooks.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-sub); grid-column: 1/-1; text-align:center; padding: 20px;">Книг пока нет. Создайте первую во вкладке "Создать"!</div>';
-        return;
-      }
-      customBooks.forEach(book => {
+      sampleBooks.forEach(book => {
         if (category !== 'all' && book.category !== category) return;
         const isFav = favorites.includes(book.id);
         container.innerHTML += `
-          <div class="book-card glass-card" onclick="openBookInfo(${book.id})">
+          <div class="book-card glass-card" onclick="openBook(${book.id})">
             <button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav(${book.id}, this)">
               <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </button>
@@ -664,27 +629,29 @@
       });
     }
 
-    // Избранное c кнопкой удаления
     function renderFavBooks() {
       const container = document.getElementById('fav-books-list');
       container.innerHTML = '';
-      const favList = customBooks.filter(b => favorites.includes(b.id));
+      const favList = sampleBooks.filter(b => favorites.includes(b.id));
       if (favList.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-sub); grid-column: 1/-1; text-align:center; padding:20px;">В избранном ничего нет</div>';
+        container.innerHTML = '<div style="color: var(--text-sub); grid-column: 1/-1;">Список избранного пуст.</div>';
         return;
       }
       favList.forEach(book => {
         container.innerHTML += `
-          <div class="book-card glass-card" onclick="openBookInfo(${book.id})">
-            <button class="fav-btn active" onclick="event.stopPropagation(); removeFav(${book.id})">
-              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-            </button>
+          <div class="book-card glass-card" onclick="openBook(${book.id})">
             <img src="${book.cover}" class="book-cover" alt="cover">
             <div class="book-title">${book.title}</div>
             <div class="book-author">${book.author}</div>
           </div>
         `;
       });
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderBooks(cat);
     }
 
     function toggleFav(id, btn) {
@@ -698,181 +665,45 @@
       localStorage.setItem('fav_books', JSON.stringify(favorites));
     }
 
-    function removeFav(id) {
-      favorites = favorites.filter(favId => favId !== id);
-      localStorage.setItem('fav_books', JSON.stringify(favorites));
-      renderFavBooks();
-    }
-
-    // Конструктор
-    function addChapterField() {
-      const container = document.getElementById('chapters-container');
-      const idx = container.children.length + 1;
-      const div = document.createElement('div');
-      div.className = 'chapter-box';
-      div.innerHTML = `
-        <strong style="font-size:12px;">Глава ${idx}</strong>
-        <input type="text" placeholder="Название главы" class="chap-title">
-        <textarea placeholder="Текст главы..." rows="3" class="chap-text"></textarea>
-        <label style="font-size: 11px; color: var(--text-sub);">Фон страницы (изображение):</label>
-        <input type="file" accept="image/*" class="chap-bg">
-        <label style="font-size: 11px; color: var(--text-sub);">Аудио/Мелодия:</label>
-        <input type="file" accept="audio/*" class="chap-audio">
-        <label style="font-size: 11px; color: var(--text-sub);">Эффект атмосферы:</label>
-        <select class="chap-effect">
-          <option value="particles">Мелкие пылинки</option>
-          <option value="rain">Дождь</option>
-          <option value="snow">Снег</option>
-          <option value="blizzard">Метель</option>
-        </select>
-      `;
-      container.appendChild(div);
-    }
-
-    function saveCustomBook() {
-      const title = document.getElementById('custom-title').value.trim();
-      const author = document.getElementById('custom-author').value.trim();
-      const category = document.getElementById('custom-category').value.trim() || 'Разное';
-      const coverInput = document.getElementById('cover-file-input');
-
-      if (!title || !author) { alert('Укажите название и автора!'); return; }
-
-      const chapterBoxes = document.querySelectorAll('.chapter-box');
-      if (chapterBoxes.length === 0) { alert('Добавьте хотя бы одну главу!'); return; }
-
-      const promises = [];
-      let coverUrl = 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500';
-
-      if (coverInput.files[0]) {
-        promises.push(new Promise(res => {
-          const r = new FileReader();
-          r.onload = e => { coverUrl = e.target.result; res(); };
-          r.readAsDataURL(coverInput.files[0]);
-        }));
-      }
-
-      const pages = [];
-      chapterBoxes.forEach((box, i) => {
-        const chapTitle = box.querySelector('.chap-title').value || `Глава ${i+1}`;
-        const chapText = box.querySelector('.chap-text').value || '';
-        const bgInput = box.querySelector('.chap-bg');
-        const audioInput = box.querySelector('.chap-audio');
-        const effect = box.querySelector('.chap-effect').value;
-
-        const pObj = { title: chapTitle, text: chapText, bg: '', audio: '', effect: effect };
-        pages.push(pObj);
-
-        if (bgInput.files[0]) {
-          promises.push(new Promise(res => {
-            const r = new FileReader();
-            r.onload = e => { pObj.bg = e.target.result; res(); };
-            r.readAsDataURL(bgInput.files[0]);
-          }));
-        }
-        if (audioInput.files[0]) {
-          promises.push(new Promise(res => {
-            const r = new FileReader();
-            r.onload = e => { pObj.audio = e.target.result; res(); };
-            r.readAsDataURL(audioInput.files[0]);
-          }));
-        }
-      });
-
-      Promise.all(promises).then(() => {
-        const newBook = {
-          id: Date.now(),
-          title, author, category,
-          cover: coverUrl,
-          pages: pages,
-          createdDate: new Date().toLocaleDateString('ru-RU'),
-          status: 'В процессе'
-        };
-        customBooks.push(newBook);
-        localStorage.setItem('my_custom_books', JSON.stringify(customBooks));
-        alert('Книга создана!');
-        document.getElementById('chapters-container').innerHTML = '';
-        renderCategories();
-        renderBooks('all');
-        switchTab('home', 'Главная', document.querySelectorAll('.nav-item')[0]);
-      });
-    }
-
-    // Информация перед чтением
-    function openBookInfo(id) {
-      selectedBookForInfo = customBooks.find(b => b.id === id);
-      document.getElementById('info-modal-cover').src = selectedBookForInfo.cover;
-      document.getElementById('info-modal-title').innerText = selectedBookForInfo.title;
-      document.getElementById('info-modal-author').innerText = selectedBookForInfo.author;
-      document.getElementById('info-modal-cat').innerText = `Категория: ${selectedBookForInfo.category}`;
-
-      const chSelect = document.getElementById('info-modal-chapters');
-      chSelect.innerHTML = selectedBookForInfo.pages.map((p, idx) => `<option value="${idx}">${idx + 1}. ${p.title}</option>`).join('');
-
-      document.getElementById('book-info-modal').classList.add('active');
-    }
-
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    function startReadingFromModal() {
-      const idx = parseInt(document.getElementById('info-modal-chapters').value) || 0;
-      closeModal('book-info-modal');
-      openBook(selectedBookForInfo.id, idx);
-    }
-
     // Читалка
-    function openBook(id, pageIndex = 0) {
-      currentBook = customBooks.find(b => b.id === id);
-      currentBook.status = 'Читается';
-      localStorage.setItem('my_custom_books', JSON.stringify(customBooks));
-      
+    function openBook(id) {
+      currentBook = sampleBooks.find(b => b.id === id);
+      currentPageIndex = 0;
       document.getElementById('reader-book-title').innerText = currentBook.title;
       document.getElementById('reader-screen').classList.add('active');
-      loadPage(pageIndex);
+      loadPage(0);
     }
 
     function closeReader() {
       document.getElementById('reader-screen').classList.remove('active');
-      document.getElementById('settings-panel').classList.remove('active');
       clearInterval(autoScrollInterval);
-      const audio = document.getElementById('ambient-audio');
-      audio.pause();
     }
 
     function loadPage(index) {
       if (index < 0 || index >= currentBook.pages.length) return;
       currentPageIndex = index;
       const page = currentBook.pages[index];
+      
+      document.getElementById('reader-text-container').innerText = page.text;
+      document.getElementById('app-background').style.backgroundImage = `url('${page.bg}')`;
 
-      document.getElementById('reader-text-container').innerHTML = `<h3>${page.title}</h3><br>${page.text.replace(/\n/g, '<br>')}`;
-      if (page.bg) document.getElementById('app-background').style.backgroundImage = `url('${page.bg}')`;
-
-      // Настройка звука страницы
-      const audio = document.getElementById('ambient-audio');
-      if (soundEnabled && page.audio) {
-        audio.src = page.audio;
-        audio.play().catch(()=>{});
-      } else { audio.pause(); }
-
-      // Эффекты
-      currentEffect = page.effect || 'particles';
-      initParticles();
-
+      // Обновление Story-Bar
       const progress = ((index + 1) / currentBook.pages.length) * 100;
       document.getElementById('story-bar').style.width = progress + '%';
-
-      if (index === currentBook.pages.length - 1) {
-        currentBook.status = 'Прочитано';
-        localStorage.setItem('my_custom_books', JSON.stringify(customBooks));
-      }
     }
 
     function changePage(delta) {
-      const next = currentPageIndex + delta;
-      if (next >= 0 && next < currentBook.pages.length) loadPage(next);
+      const nextIndex = currentPageIndex + delta;
+      if (nextIndex >= 0 && nextIndex < currentBook.pages.length) {
+        loadPage(nextIndex);
+      } else if (nextIndex >= currentBook.pages.length) {
+        alert("Это последняя страница");
+      }
     }
 
     function toggleSettings() {
-      document.getElementById('settings-panel').classList.toggle('active');
+      const panel = document.getElementById('settings-panel');
+      panel.classList.toggle('active');
     }
 
     function changeFontSize(delta) {
@@ -881,9 +712,9 @@
     }
 
     function updateVisuals() {
-      const val = Math.max(15, document.getElementById('brightness-slider').value);
+      const brightness = document.getElementById('brightness-slider').value;
       const blur = document.getElementById('blur-slider').value;
-      document.getElementById('app-background').style.filter = `brightness(${val}%) blur(${blur}px)`;
+      document.getElementById('app-background').style.filter = `brightness(${brightness}%) blur(${blur}px)`;
     }
 
     function toggleAutoScroll() {
@@ -895,176 +726,119 @@
         btn.innerText = 'Выкл';
       } else {
         btn.innerText = 'Вкл';
-        autoScrollInterval = setInterval(() => { container.scrollTop += 1; }, 50);
+        autoScrollInterval = setInterval(() => {
+          container.scrollTop += 1;
+        }, 50);
       }
     }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('sound-btn').innerText = soundEnabled ? 'Вкл' : 'Выкл';
-      const audio = document.getElementById('ambient-audio');
-      if (!soundEnabled) audio.pause();
-      else if (currentBook?.pages[currentPageIndex]?.audio) audio.play().catch(()=>{});
-    }
-
-    function toggleEffects() {
-      effectsEnabled = !effectsEnabled;
-      document.getElementById('effects-btn').innerText = effectsEnabled ? 'Вкл' : 'Выкл';
-      initParticles();
-    }
-
-    // Цитирование
-    function checkSelection(e) {
-      const sel = window.getSelection();
-      const text = sel.toString().trim();
-      const tooltip = document.getElementById('quote-tooltip');
-      if (text.length > 3) {
-        const x = e.clientX || (e.touches && e.touches[0].clientX) || 100;
-        const y = e.clientY || (e.touches && e.touches[0].clientY) || 100;
-        tooltip.style.left = `${x}px`;
-        tooltip.style.top = `${y - 40}px`;
-        tooltip.style.display = 'block';
-      } else {
-        tooltip.style.display = 'none';
-      }
-    }
-
-    function addQuoteFromSelection() {
-      const text = window.getSelection().toString().trim();
-      if (text) {
-        savedQuotes.push({ book: currentBook ? currentBook.title : 'Неизвестно', text: text });
-        localStorage.setItem('saved_quotes', JSON.stringify(savedQuotes));
-        alert('Цитата сохранена!');
-      }
-      document.getElementById('quote-tooltip').style.display = 'none';
-    }
-
-    function renderQuotes() {
-      const container = document.getElementById('quotes-container');
-      if (savedQuotes.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-sub);">Нет сохраненных цитат.</div>';
+    // Таймер Целей
+    function startGoalTimer(minutes) {
+      if (minutes === 0) {
+        openBook(1);
         return;
       }
-      container.innerHTML = savedQuotes.map(q => `
-        <div style="padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 2px solid var(--accent-color);">
-          <div style="font-weight: bold; font-size: 11px; color: var(--accent-color);">${q.book}</div>
-          <div>"${q.text}"</div>
-        </div>
-      `).join('');
+      openBook(1);
+      const timerEl = document.getElementById('corner-timer');
+      timerEl.style.display = 'block';
+      let secondsLeft = minutes * 60;
+
+      clearInterval(goalTimerInterval);
+      goalTimerInterval = setInterval(() => {
+        secondsLeft--;
+        const m = Math.floor(secondsLeft / 60);
+        const s = secondsLeft % 60;
+        timerEl.innerText = `⏳ ${m}:${s < 10 ? '0' : ''}${s}`;
+
+        if (secondsLeft <= 0) {
+          clearInterval(goalTimerInterval);
+          timerEl.style.display = 'none';
+          document.getElementById('timer-modal').classList.add('active');
+        }
+      }, 1000);
     }
 
-    // Профиль
-    function renderProfileTab() {
-      renderQuotes();
-      const stats = document.getElementById('profile-stats');
-      const reading = customBooks.filter(b => b.status === 'Читается').length;
-      const finished = customBooks.filter(b => b.status === 'Прочитано').length;
-      stats.innerHTML = `
-        <div>Всего книг: <b>${customBooks.length}</b></div>
-        <div>В процессе чтения: <b>${reading}</b></div>
-        <div>Прочитано: <b>${finished}</b></div>
-      `;
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
 
-      const myBooks = document.getElementById('my-books-list');
-      if (customBooks.length === 0) {
-        myBooks.innerHTML = '<div style="color: var(--text-sub);">Вы ещё не создавали книг.</div>';
+    // Сохранение Цитат
+    function saveSelectedQuote() {
+      const selectedText = window.getSelection().toString().trim();
+      if (selectedText.length > 5) {
+        const quotesContainer = document.getElementById('quotes-container');
+        quotesContainer.innerHTML += `<div style="padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 2px solid var(--accent-color);">"${selectedText}"</div>`;
+      }
+    }
+
+    // Создание своей книги
+    function saveCustomBook() {
+      const title = document.getElementById('custom-title').value;
+      const author = document.getElementById('custom-author').value;
+      const text = document.getElementById('custom-text').value;
+
+      if (!title || !text) {
+        alert('Заполните название и текст!');
         return;
       }
-      myBooks.innerHTML = customBooks.map(b => `
-        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px;">
-          <div>
-            <b>${b.title}</b>
-            <div style="font-size:10px; color: var(--text-sub);">Создано: ${b.createdDate || 'Не указана'}</div>
-          </div>
-          <span style="font-size:10px; color: var(--accent-color);">${b.status || 'В процессе'}</span>
-        </div>
-      `).join('');
+
+      const newBook = {
+        id: Date.now(),
+        title: title,
+        author: author || 'Пользователь',
+        category: 'fantasy',
+        cover: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=500',
+        pages: [{ text: text, bg: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=1000' }]
+      };
+
+      sampleBooks.push(newBook);
+      renderBooks('all');
+      alert('Книга успешно добавлена!');
+      switchTab('home', 'Главная', document.querySelectorAll('.nav-item')[0]);
     }
 
-    // Цели
-    function renderGoalsTab() {
-      const select = document.getElementById('goal-book-select');
-      select.innerHTML = customBooks.map(b => `<option value="${b.title}">${b.title}</option>`).join('');
+    function handleFileImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('custom-text').value = evt.target.result;
+      };
+      reader.readAsText(file);
     }
 
-    function setCustomGoal() {
-      const bookTitle = document.getElementById('goal-book-select').value;
-      const timeVal = document.getElementById('goal-time-input').value;
-
-      if (!bookTitle) { alert('Сначала создайте книгу!'); return; }
-
-      const goalBox = document.getElementById('active-goal-box');
-      const goalText = document.getElementById('active-goal-text');
-
-      if (timeVal) {
-        goalText.innerText = `Читаем "${bookTitle}" — ${timeVal} минут(ы)`;
-        if (tg) tg.sendData(JSON.stringify({ action: "set_goal", book: bookTitle, minutes: timeVal }));
-      } else {
-        goalText.innerText = `Пора почитать "${bookTitle}"!`;
-        if (tg) tg.sendData(JSON.stringify({ action: "notify_read", book: bookTitle }));
-      }
-      goalBox.style.display = 'block';
-      alert('Цель установлена!');
-    }
-
-    function cancelGoal() {
-      document.getElementById('active-goal-box').style.display = 'none';
-    }
-
-    // Генератор эффектов
+    // Частицы на Canvas
     function initParticles() {
-      if (particleAnimationId) cancelAnimationFrame(particleAnimationId);
       const canvas = document.getElementById('particles-canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-      if (!effectsEnabled) { ctx.clearRect(0, 0, canvas.width, canvas.height); return; }
-
-      let count = 40;
-      if (currentEffect === 'blizzard') count = 120;
-      if (currentEffect === 'rain') count = 100;
-
-      const items = Array.from({ length: count }, () => ({
+      const particles = Array.from({ length: 35 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: currentEffect === 'rain' ? Math.random() * 1 + 0.5 : Math.random() * 3 + 1,
-        dx: currentEffect === 'blizzard' ? Math.random() * 4 + 2 : (Math.random() - 0.5) * 0.8,
-        dy: currentEffect === 'rain' ? Math.random() * 8 + 4 : Math.random() * 1.5 + 0.5,
-        length: currentEffect === 'rain' ? Math.random() * 10 + 5 : 0
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: Math.random() * 0.5 + 0.2
       }));
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        items.forEach(p => {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        particles.forEach(p => {
           ctx.beginPath();
-          if (currentEffect === 'rain') {
-            ctx.strokeStyle = 'rgba(180, 220, 255, 0.6)';
-            ctx.lineWidth = p.r;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p.x, p.y + p.length);
-            ctx.stroke();
-          } else {
-            ctx.fillStyle = currentEffect === 'particles' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)';
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
           p.x += p.dx;
           p.y += p.dy;
-
-          if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-          if (p.x > canvas.width) { p.x = 0; }
-          if (p.x < 0) { p.x = canvas.width; }
+          if (p.y > canvas.height) p.y = 0;
+          if (p.x > canvas.width || p.x < 0) p.x = Math.random() * canvas.width;
         });
-
-        particleAnimationId = requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
       }
       animate();
     }
 
-    addChapterField();
     init();
   </script>
 </body>
